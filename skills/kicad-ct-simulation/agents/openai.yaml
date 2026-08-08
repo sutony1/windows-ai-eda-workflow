@@ -1,0 +1,4 @@
+interface:
+  display_name: "KiCad CT Simulation"
+  short_description: "Simulate CT signal conditioners and produce KiCad 9 schematics."
+  default_prompt: "Use $kicad-ct-simulation to design, simulate, and document a CT voltage conditioner."

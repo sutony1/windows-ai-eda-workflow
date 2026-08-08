@@ -7,10 +7,10 @@
 | Windows | 10/11 x64 | `Get-ComputerInfo` |
 | KiCad | 10.0.5 | `kicad-cli version` |
 | KiCAD-MCP-Server | 2.6.0 / `0dc3ee8` | `package.json`, MCP tool call |
-| ngspice | 42+ x64 KLU | `ngspice_con.exe -v` |
+| ngspice | Validated 42+ x64 KLU; current stable 46 | `ngspice_con.exe -v` |
 | LTspice | 26.0.2.1 | Windows Apps / registry |
 | EasyEDA Pro | 3.2.175 | title bar / Apps |
-| easyeda-agent | 0.21.2 | `easyeda daemon health` |
+| easyeda-agent | Validated 0.21.2; upstream latest 0.21.4 | `easyeda daemon health` |
 | Node.js | 20+ | `node --version` |
 
 Install the exact baseline first when reproducibility matters. Upgrade only one layer at a time and repeat all smoke tests.
@@ -45,7 +45,7 @@ Restart Codex and call a read-only KiCad MCP tool before editing. [mixelpixx/Kon
 
 ## ngspice
 
-Install an official stable Windows x64 build. The verified build is ngspice 42+ with KLU. Prefer the console executable for automation:
+Install the official stable Windows x64 build. The verified build is ngspice 42+ with KLU; ngspice 46 is the current stable end-user release as of 2026-08 and is recommended for a fresh computer. Prefer the console executable for automation:
 
 ```powershell
 ngspice_con.exe -v
@@ -64,7 +64,7 @@ Run the included deck after placing the required vendor library beside it or upd
 
 Install EasyEDA Pro and enable `Settings -> Allow external interaction`. Install the easyeda-agent CLI/daemon, matching connector `.eext`, and matching upstream Skill. All three must use the same release.
 
-The exact validated combination is EasyEDA Pro 3.2.175 plus easyeda-agent 0.21.2. Upstream releases may be newer; upgrade CLI, connector and Skill together. Start and verify:
+The exact validated combination is EasyEDA Pro 3.2.175 plus easyeda-agent 0.21.2. Upstream 0.21.4 is the latest as of 2026-08. For exact reproduction start with 0.21.2; otherwise upgrade CLI, connector and Skill together and rerun the full smoke-test set. Start and verify:
 
 ```powershell
 .\scripts\Start-EasyEdaAgent.ps1

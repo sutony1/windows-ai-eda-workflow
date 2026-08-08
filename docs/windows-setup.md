@@ -31,7 +31,7 @@ The exact source is <https://github.com/mixelpixx/KiCAD-MCP-Server>, baseline 2.
 
 ## 3. ngspice
 
-Install a Windows x64 console build from <https://ngspice.sourceforge.io/download.html>. The validated machine uses ngspice 42+ with KLU. Add the directory containing `ngspice_con.exe` to the user `PATH` and verify:
+Install the current stable Windows x64 build from <https://ngspice.sourceforge.io/download.html>. As of 2026-08 the official end-user stable release is ngspice 46; the validated machine's 42+ KLU build remains acceptable for reproducing the stored result. Add the directory containing `ngspice_con.exe` to the user `PATH` and verify:
 
 ```powershell
 ngspice_con.exe -v
@@ -47,7 +47,7 @@ Install LTspice from <https://www.analog.com/en/resources/design-tools-and-calcu
 ## 5. EasyEDA Pro and easyeda-agent
 
 1. Install 嘉立创 EDA 专业版. The validated version is 3.2.175.
-2. Download one easyeda-agent release from <https://github.com/zhoushoujianwork/easyeda-agent/releases>. The validated version is 0.21.2.
+2. Download one easyeda-agent release from <https://github.com/zhoushoujianwork/easyeda-agent/releases>. The validated version is 0.21.2; upstream 0.21.4 is the latest as of 2026-08. Use 0.21.2 for an exact reproduction, or upgrade all pieces together to 0.21.4 and rerun every smoke test.
 3. Install all matching pieces from that same release: Windows CLI/daemon, EasyEDA connector `.eext`, and the upstream Codex Skill.
 4. In EasyEDA Pro enable external interaction in Settings.
 5. Start the daemon:

@@ -15,4 +15,5 @@ manufacturing_*/
 .validation-deps/
 .install-test/
 .export-test/
+.script-test/
 node_modules/

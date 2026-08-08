@@ -7,6 +7,7 @@ This repository integrates, but does not redistribute, the following projects:
 - ngspice: use official downloads and license terms.
 - LTspice and LTC1967 models: Analog Devices terms apply. Obtain the LTC1967 model separately; it is intentionally not committed here.
 - 嘉立创 EDA 专业版 and its conversion assistant: vendor software and terms apply.
+- `tools/easyeda-conversion-forensics` contains only our interoperability scripts; it does not redistribute the conversion assistant, its worker, or its bundled 7-Zip binary.
 - zhoushoujianwork/easyeda-agent: install CLI, connector and Skill from one matching upstream release.
 - FreeRouting, PyVISA and VISA backends: optional components governed by their own licenses.
 

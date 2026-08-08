@@ -8,10 +8,10 @@
 | KiCAD-MCP-Server | 2.6.0, `0dc3ee8ccad6efbf62c02b6a8736ddcf43118188` |
 | Node.js | 24.13.1 |
 | Python | 3.12 |
-| ngspice | 42+ KLU x64 |
+| ngspice | 42+ KLU x64 validated; 46 recommended for new install |
 | LTspice | 26.0.2.1 |
 | EasyEDA Pro | 3.2.175 |
-| easyeda-agent | 0.21.2 |
+| easyeda-agent | 0.21.2 validated; 0.21.4 current upstream |
 
 ## Evidence expected on a new computer
 

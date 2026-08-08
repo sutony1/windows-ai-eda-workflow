@@ -14,6 +14,7 @@ Preserve KiCad as the authoritative electrical and PCB source. Use EasyEDA as a 
 3. Read [references/easyeda-jlcpcb.md](references/easyeda-jlcpcb.md) before importing into EasyEDA or quoting/ordering.
 4. Read [references/migration-checklist.md](references/migration-checklist.md) for a new-computer handoff.
 5. For the included CT RMS-to-DC design, also invoke `$kicad-ct-rms-pcb`.
+6. Use `$kicad-ct-simulation` only for legacy KiCad 9 projects or when investigating the KiCad 9/10 file-version trap.
 
 ## Required gates
 
