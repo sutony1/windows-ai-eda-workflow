@@ -29,10 +29,12 @@ jobs:
           $required = @(
             'skills/windows-ai-eda-workflow/SKILL.md',
             'skills/kicad-ct-rms-pcb/SKILL.md',
+            'skills/kicad-ct-simulation/SKILL.md',
             'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pro',
             'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_sch',
-            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pcb',
-            'examples/ct-rms-to-dc/manufacturing/ct_amp_rectifier_5v_clean_JLCPCB_Gerbers.zip'
+            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pcb'
           )
           $missing = $required | Where-Object { -not (Test-Path -LiteralPath $_) }
           if ($missing) { $missing | ForEach-Object { Write-Error "Missing: $_" }; exit 1 }
+          $gerberZip = Get-ChildItem -LiteralPath 'examples/ct-rms-to-dc/manufacturing' -Filter '*_JLCPCB_Gerbers*.zip' -File
+          if (-not $gerberZip) { Write-Error 'Missing: *_JLCPCB_Gerbers*.zip'; exit 1 }
