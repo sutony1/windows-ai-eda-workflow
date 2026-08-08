@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" role="img" aria-labelledby="title desc">
+  <title id="title">LTC1967 宏模型输入输出曲线</title>
+  <desc id="desc">输入从零到 0.3 Vrms，输出从约 0.019 V 增加到约 2.973 V，接近理想十倍关系。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d1426"/><stop offset="1" stop-color="#111d35"/></linearGradient>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#62e6d3" stop-opacity=".28"/><stop offset="1" stop-color="#62e6d3" stop-opacity="0"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1000" height="580" rx="20" fill="url(#bg)"/>
+  <text x="68" y="57" fill="#f5f8ff" font-family="Microsoft YaHei, sans-serif" font-size="25" font-weight="700">LTspice / LTC1967 七点扫描</text>
+  <text x="68" y="86" fill="#7f8da7" font-family="Microsoft YaHei, sans-serif" font-size="13">C6 = 10 µF · 50 Hz · 5 V 单电源 · 标定前数据</text>
+  <g stroke="#26344f" stroke-width="1">
+    <path d="M90 100V500M227 100V500M363 100V500M500 100V500M637 100V500M773 100V500M910 100V500"/>
+    <path d="M90 100H910M90 167H910M90 233H910M90 300H910M90 367H910M90 433H910M90 500H910"/>
+  </g>
+  <g fill="#8491a8" font-family="Inter, Microsoft YaHei, sans-serif" font-size="12">
+    <text x="80" y="524">0</text><text x="211" y="524">0.05</text><text x="347" y="524">0.10</text><text x="484" y="524">0.15</text><text x="621" y="524">0.20</text><text x="757" y="524">0.25</text><text x="894" y="524">0.30</text>
+    <text x="58" y="504">0</text><text x="48" y="437">0.5</text><text x="50" y="371">1.0</text><text x="49" y="304">1.5</text><text x="48" y="237">2.0</text><text x="48" y="171">2.5</text><text x="48" y="104">3.0</text>
+    <text x="456" y="557" fill="#aab5c8">输入电压 / Vrms</text>
+    <text transform="translate(19 348) rotate(-90)" fill="#aab5c8">输出直流电压 / V</text>
+  </g>
+  <path d="M90 500L910 100" stroke="#7890bb" stroke-width="2" stroke-dasharray="7 8" fill="none" opacity=".7"/>
+  <path d="M90 497L227 434L363 368L500 302L637 236L773 170L910 104L910 500L90 500Z" fill="url(#area)"/>
+  <polyline points="90,497 227,434 363,368 500,302 637,236 773,170 910,104" fill="none" stroke="#62e6d3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <g fill="#0d1426" stroke="#62e6d3" stroke-width="3">
+    <circle cx="90" cy="497" r="6"/><circle cx="227" cy="434" r="6"/><circle cx="363" cy="368" r="6"/><circle cx="500" cy="302" r="6"/><circle cx="637" cy="236" r="6"/><circle cx="773" cy="170" r="6"/><circle cx="910" cy="104" r="6"/>
+  </g>
+  <g font-family="Inter, Microsoft YaHei, sans-serif" font-size="12">
+    <rect x="682" y="111" width="173" height="56" rx="8" fill="#101a2e" stroke="#2a3855"/>
+    <path d="M697 130h28" stroke="#7890bb" stroke-width="2" stroke-dasharray="5 4"/><text x="735" y="134" fill="#9aa8bd">理想 10 V/V</text>
+    <path d="M697 150h28" stroke="#62e6d3" stroke-width="3"/><text x="735" y="154" fill="#d5deed">宏模型结果</text>
+  </g>
+</svg>

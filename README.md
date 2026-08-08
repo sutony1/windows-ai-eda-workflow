@@ -1,5 +1,7 @@
 # Windows AI EDA Workflow
 
+图文案例现已发布：[从 SPICE 仿真到 KiCad 10 PCB](https://sutony1.github.io/windows-ai-eda-workflow/)。
+
 一套在 Windows 10/11 上可复现的 AI 辅助电子设计流程：
 
 `SPICE 仿真 -> KiCad 10 原理图/PCB -> ERC/DRC -> Gerber -> 嘉立创报价/生产`
