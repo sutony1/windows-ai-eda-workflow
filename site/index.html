@@ -53,6 +53,40 @@
   </header>
 
   <main id="story">
+    <section class="section origin-section">
+      <div class="shell">
+        <div class="section-kicker">00 · 项目缘起</div>
+        <div class="origin-grid">
+          <div>
+            <h2>它从一个普通 86 面板里的现实问题开始</h2>
+            <p>在普通家装中，大功率电器会长时间经过墙内的 86 型面板和接线端子。如果负载较大、端子松动或接触电阻升高，狭小空间内就可能持续积热，严重时带来绝缘老化、面板烧蚀甚至火灾风险。这个项目最初的想法，就是先做一块能同时观察<strong>负载电流</strong>和<strong>面板内部温度</strong>的低压检测模块，为异常温升提供更早的数据依据。</p>
+            <p>50 Hz 交流电流由磁环电流互感器测量——磁环只套住一根载流导线，把一次侧电流变成隔离的小交流电压。低压电子部分由合规的隔离式 220 V AC → 5 V DC 模块供电；本项目的 RMS-to-DC 电路再把 CT 的交流信号变为约 0–3 V 直流量，交给单片机 ADC 读取。单片机结合温度传感器数据，就能进一步计算电流、估算功率并判断温升趋势。</p>
+            <p>后续产品形态有两条路线：一种是在 86 面板上增加小型显示屏，直接显示电流、估算功率与温度；另一种是采用 ESP32，通过 Wi‑Fi 把数据送到手机、家庭主控或电脑，成为智能家居监测系统的一部分。</p>
+          </div>
+          <aside class="origin-note">
+            <span>SAFETY FIRST</span>
+            <h3>监测不是保护器件</h3>
+            <p>检测结果不能替代断路器、保险丝、可靠接线和阻燃结构。市电侧必须使用合规隔离电源并满足爬电距离、绝缘、温升和安装规范；本项目 PCB 只处理隔离后的低压信号。</p>
+          </aside>
+        </div>
+
+        <div class="origin-flow" aria-label="86 面板智能监测系统信号链">
+          <div class="origin-node source-node"><b>86 面板</b><span>50 Hz 负载电流<br>内部温度</span></div>
+          <div class="origin-arrow">→</div>
+          <div class="origin-node"><b>CT + 温度传感器</b><span>CT 仅套单根导线<br>获得隔离小信号</span></div>
+          <div class="origin-arrow">→</div>
+          <div class="origin-node active-node"><b>RMS-to-DC</b><span>0–300 mVrms<br>转换为 0–3 V DC</span></div>
+          <div class="origin-arrow">→</div>
+          <div class="origin-node"><b>MCU ADC</b><span>电流 / 功率估算<br>温升趋势判断</span></div>
+          <div class="origin-arrow branch-arrow">↗<br>↘</div>
+          <div class="origin-output">
+            <span><b>本地显示</b>温度 · 电流 · 功率</span>
+            <span><b>ESP32 / Wi‑Fi</b>手机 · 主控 · 电脑</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section shell intro">
       <div class="section-kicker">01 · 为什么要这样做</div>
       <div class="two-col">
