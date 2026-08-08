@@ -1,0 +1,4 @@
+interface:
+  display_name: "Windows AI EDA Workflow"
+  short_description: "Reproduce the KiCad-to-JLCPCB AI EDA pipeline"
+  default_prompt: "Use $windows-ai-eda-workflow to set up and verify this Windows AI EDA toolchain."

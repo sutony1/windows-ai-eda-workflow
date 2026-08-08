@@ -1,0 +1,25 @@
+* LTC1967 5 V, 50 Hz, 0-300 mVrms optimisation deck for LTspice.
+* Obtain LTC1966.lib from Analog Devices/LTspice and place it beside this deck,
+* or change the .lib line to the model's local path. Do not publish the model.
+* U1 official symbol pin order: GND IN1 IN2 VOUT OUT_RTN VDD
+.param VINRMS=0.30 CAVG=10u RG=10k RF=93.54k
+VDD VDD 0 5
+VCM INM 0 1.85
+VSIG INP INM SINE(0 {VINRMS*sqrt(2)} 50)
+XU1 0 INP INM VRMS 0 VDD LTC1967
+CAVG1 VRMS 0 {CAVG}
+RLOAD VRMS 0 1Meg
+
+* OPA2333 closed-loop transfer represented by an ideal behavioural gain here.
+* The KiCad source uses the physical OPA2333 and 10k/93.1k+trim network.
+BGAIN VGAIN 0 V={V(VRMS)*(1+RF/RG)}
+RLP VGAIN VOUT 1k
+CLP VOUT 0 10u
+RADC VOUT 0 100k
+
+.step param VINRMS list 0 0.05 0.10 0.15 0.20 0.25 0.30
+.tran 0 5.0 4.0 500u
+.option plotwinsize=0
+.save V(VRMS) V(VOUT)
+.lib LTC1966.lib
+.end

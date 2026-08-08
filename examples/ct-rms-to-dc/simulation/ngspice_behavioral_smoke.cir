@@ -1,0 +1,27 @@
+* Portable behavioural smoke test for the 5 V CT RMS-to-DC transfer.
+* This is not the LTC1967 transistor-level/vendor macro model.
+.param VINRMS=0.300
+.param FREQ=50
+.param KRMS=1.1107207345
+.param GAIN=10
+
+Vin in 0 SIN(0 {VINRMS*sqrt(2)} {FREQ})
+Brect rect 0 V={abs(V(in))*KRMS}
+Ravg rect rms 10k
+Cavg rms 0 10u
+Bamp ideal 0 V={min(4.9,max(0,V(rms)*GAIN))}
+Rout ideal out 1k
+Cout out 0 10u
+Rload out 0 100k
+
+.tran 100u 8s
+.meas tran VOUT_AVG AVG V(out) FROM=7 TO=8
+.meas tran VOUT_MIN MIN V(out) FROM=7 TO=8
+.meas tran VOUT_MAX MAX V(out) FROM=7 TO=8
+.meas tran VOUT_RIPPLE PARAM='VOUT_MAX-VOUT_MIN'
+
+.control
+run
+quit
+.endc
+.end

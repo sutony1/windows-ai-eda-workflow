@@ -1,0 +1,38 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  skills-and-scripts:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object {
+            $tokens = $null
+            $parseErrors = $null
+            [void][Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors.Count) {
+              $failed = $true
+              $parseErrors | ForEach-Object { Write-Error "$($_.Extent.File): $($_.Message)" }
+            }
+          }
+          if ($failed) { exit 1 }
+      - name: Check required workflow files
+        shell: pwsh
+        run: |
+          $required = @(
+            'skills/windows-ai-eda-workflow/SKILL.md',
+            'skills/kicad-ct-rms-pcb/SKILL.md',
+            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pro',
+            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_sch',
+            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pcb',
+            'examples/ct-rms-to-dc/manufacturing/ct_amp_rectifier_5v_clean_JLCPCB_Gerbers.zip'
+          )
+          $missing = $required | Where-Object { -not (Test-Path -LiteralPath $_) }
+          if ($missing) { $missing | ForEach-Object { Write-Error "Missing: $_" }; exit 1 }

@@ -1,0 +1,26 @@
+reference,value,footprint,layer
+R1,47k,Resistor_SMD:R_0805_2012Metric,F.Cu
+RV2,5k trim (set 0.44k),Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical,F.Cu
+C6,10uF RMS average,Capacitor_SMD:C_1206_3216Metric,F.Cu
+J1,CT IN 0-300mVrms,"TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",F.Cu
+J2,OUT 0-3V DC,"TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",F.Cu
+C1,1uF,Capacitor_SMD:C_0805_2012Metric,F.Cu
+R5,22k 1%,Resistor_SMD:R_0805_2012Metric,F.Cu
+C5,100nF,Capacitor_SMD:C_0805_2012Metric,F.Cu
+R8,1k,Resistor_SMD:R_0805_2012Metric,F.Cu
+C2,10uF,Capacitor_SMD:C_1206_3216Metric,F.Cu
+C4,10uF,Capacitor_SMD:C_1206_3216Metric,F.Cu
+MH4,MountingHole_3.2mm,MountingHole:MountingHole_3.2mm,F.Cu
+MH1,MountingHole_3.2mm,MountingHole:MountingHole_3.2mm,F.Cu
+U1,LTC1967CMS8,Package_SO:MSOP-8_3x3mm_P0.65mm,F.Cu
+MH3,MountingHole_3.2mm,MountingHole:MountingHole_3.2mm,F.Cu
+R4,47k,Resistor_SMD:R_0805_2012Metric,F.Cu
+J3,+5V / GND,"TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",F.Cu
+R3,10k,Resistor_SMD:R_0805_2012Metric,F.Cu
+R6,10k 0.1%,Resistor_SMD:R_0805_2012Metric,F.Cu
+U2,OPA333AIDBVR,Package_TO_SOT_SMD:SOT-23-5,F.Cu
+R7,93.1k 0.1%,Resistor_SMD:R_0805_2012Metric,F.Cu
+Q1,BC547B,Package_TO_SOT_THT:TO-92_Inline,F.Cu
+MH2,MountingHole_3.2mm,MountingHole:MountingHole_3.2mm,F.Cu
+RV1,10k trim (set 5.1k),Potentiometer_THT:Potentiometer_Bourns_3296W_Vertical,F.Cu
+R2,47k,Resistor_SMD:R_0805_2012Metric,F.Cu

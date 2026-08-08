@@ -1,0 +1,6 @@
+interface:
+  display_name: "KiCad CT RMS to DC PCB"
+  short_description: "CT测量电路的仿真、校准、原理图与PCB流程。"
+  default_prompt: "Use $kicad-ct-rms-pcb to design, simulate, calibrate, and lay out a 5 V CT RMS-to-DC conditioner in KiCad."
+policy:
+  allow_implicit_invocation: true
