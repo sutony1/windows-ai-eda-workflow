@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>从 SPICE 仿真到 KiCad 10 PCB：一个 5 V 真有效值测量板的完整实践</title>
+  <meta name="description" content="用 ngspice、LTspice 和 LTC1967 宏模型完成 0–300 mVrms、50 Hz 到 0–3 V DC 的仿真、标定与 KiCad 10 PCB 设计。">
+  <meta property="og:title" content="从 SPICE 仿真到 KiCad 10 PCB">
+  <meta property="og:description" content="一个可复现的 5 V CT 真有效值测量板案例：仿真、原理图、PCB、3D 与验证。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://sutony1.github.io/windows-ai-eda-workflow/">
+  <meta property="og:image" content="https://sutony1.github.io/windows-ai-eda-workflow/assets/images/kicad-pcb-3d.png">
+  <link rel="canonical" href="https://sutony1.github.io/windows-ai-eda-workflow/">
+  <meta name="theme-color" content="#0a0f1f">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero" id="top">
+    <nav class="nav shell" aria-label="页面导航">
+      <a class="brand" href="#top" aria-label="返回顶部"><span class="brand-mark">∿</span> AI EDA Lab</a>
+      <div class="nav-links">
+        <a href="#simulation">仿真</a>
+        <a href="#schematic">原理图</a>
+        <a href="#pcb">PCB</a>
+        <a href="#reproduce">复现</a>
+        <a class="nav-source" href="https://github.com/sutony1/windows-ai-eda-workflow">GitHub 源码 ↗</a>
+      </div>
+    </nav>
+
+    <div class="hero-grid shell">
+      <div class="hero-copy">
+        <p class="eyebrow">NGSPICE · LTSPICE · KICAD 10</p>
+        <h1>从 300 mVrms<br><span>到一块真正的 PCB</span></h1>
+        <p class="lead">一个 5 V 供电的电流互感器真有效值测量板：先用可移植模型寻找方向，再用 LTC1967 厂商宏模型标定，最后落到可检查、可布线、可制造的 KiCad 10 工程。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#story">阅读完整案例</a>
+          <a class="button secondary" href="https://github.com/sutony1/windows-ai-eda-workflow/tree/main/examples/ct-rms-to-dc">下载工程文件</a>
+        </div>
+        <p class="meta">发布于 2026-08-08 · 开源工程与 Codex Skill 已同步</p>
+      </div>
+      <figure class="hero-visual image-card">
+        <img src="assets/images/kicad-pcb-3d.png" alt="KiCad 10 中完成装配的 RMS 转直流测量板 3D 视图" width="1918" height="1079">
+        <figcaption><span class="live-dot"></span> KiCad 10 真实工程 · 3D 装配预览</figcaption>
+      </figure>
+    </div>
+
+    <div class="metrics shell" aria-label="项目关键指标">
+      <div><strong>5 V</strong><span>单电源供电</span></div>
+      <div><strong>0–300 mVrms</strong><span>50 Hz 输入</span></div>
+      <div><strong>≈ 0–3 V DC</strong><span>ADC 友好输出</span></div>
+      <div><strong>0</strong><span>未布线 / DRC 错误</span></div>
+    </div>
+  </header>
+
+  <main id="story">
+    <section class="section shell intro">
+      <div class="section-kicker">01 · 为什么要这样做</div>
+      <div class="two-col">
+        <div>
+          <h2>难点不在“整流”，而在小信号下仍然线性</h2>
+          <p>电流互感器二次侧给出的 50 Hz 交流电压只有 0–300 mVrms。普通二极管整流在低端会被结压降吞掉，单纯放大又不能直接得到与真有效值成比例的直流量。</p>
+          <p>因此目标被明确成一条可测试的传输函数：<code>Vout ≈ 10 × Vin,rms</code>。电路必须在 5 V 单电源下工作，同时留出输入偏置、输出摆幅、滤波稳定时间和实物校准余量。</p>
+        </div>
+        <aside class="callout">
+          <span class="callout-label">设计边界</span>
+          <p>这是一块低压信号调理板，不是直接接入市电的隔离方案。CT、负载电阻、绝缘等级和机械结构仍需按最终系统单独设计。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section band">
+      <div class="shell">
+        <div class="section-kicker">02 · 可复现工作流</div>
+        <h2>每一步都有可交付物，而不是只看一张波形图</h2>
+        <div class="workflow" aria-label="项目流程">
+          <div class="workflow-step"><span>1</span><h3>需求量化</h3><p>量程、频率、供电、负载与目标误差</p></div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step"><span>2</span><h3>ngspice</h3><p>行为模型快速验证传输关系与滤波</p></div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step"><span>3</span><h3>LTspice</h3><p>LTC1967 官方宏模型七点扫描与标定</p></div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step"><span>4</span><h3>KiCad 10</h3><p>真实器件、网表、ERC、PCB 与 DRC</p></div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step"><span>5</span><h3>制造交付</h3><p>Gerber、BOM、坐标与校准步骤</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="simulation">
+      <div class="section-kicker">03 · 两级仿真</div>
+      <h2>ngspice 找方向，LTspice 做器件级复核</h2>
+      <div class="simulation-grid">
+        <article class="panel">
+          <span class="chip">PORTABLE</span>
+          <h3>ngspice 行为模型</h3>
+          <p>先用绝对值、平均滤波和受控增益搭起完全可移植的冒烟测试。它不冒充 LTC1967，但能迅速回答三个问题：量程是否合理、平均电容是否足够、输出是否会触顶。</p>
+          <pre><code>.param VINRMS=0.300
+Vin in 0 SIN(0 {VINRMS*sqrt(2)} 50)
+Brect rect 0 V={abs(V(in))*1.11072}
+Ravg rect rms 10k
+Cavg rms 0 10u
+.tran 100u 8s</code></pre>
+          <p class="result"><strong>满量程冒烟测试：</strong>平均输出约 2.970 V，稳态纹波约 10.1 mVpp。</p>
+        </article>
+        <article class="panel accent-panel">
+          <span class="chip">VENDOR MODEL</span>
+          <h3>LTspice + LTC1967</h3>
+          <p>最终参数使用 Analog Devices 随 LTspice 提供的 LTC1967 宏模型复核。输入叠加在约 1.85 V 共模偏置上，扫描 0、50、100、150、200、250、300 mVrms，并只在 10 µF 平均电容稳定后测量。</p>
+          <ul class="clean-list">
+            <li><span>C6</span><strong>10 µF</strong> RMS 平均</li>
+            <li><span>R6</span><strong>10.0 kΩ · 0.1%</strong></li>
+            <li><span>R7 + RV2</span><strong>93.1 kΩ + 5 kΩ 微调</strong></li>
+            <li><span>标定点</span><strong>RV2 ≈ 0.44 kΩ</strong></li>
+          </ul>
+        </article>
+      </div>
+
+      <figure class="chart-card">
+        <img src="assets/images/transfer-curve.svg" alt="LTspice 宏模型扫描所得输入 RMS 电压与输出直流电压曲线" width="1000" height="580">
+        <figcaption>七点宏模型扫描。300 mVrms 点可由多圈电位器标定到 3.000 V；零输入残余约 19.5 mV，建议在 ADC 固件中做零点扣除。</figcaption>
+      </figure>
+
+      <div class="table-wrap" role="region" aria-label="宏模型扫描数据" tabindex="0">
+        <table>
+          <thead><tr><th>输入 Vrms</th><th>LTC1967 平均值</th><th>输出 V</th><th>LTC 输出纹波 Vpp</th></tr></thead>
+          <tbody>
+            <tr><td>0.000</td><td>0.001905</td><td>0.01935</td><td>0.000000</td></tr>
+            <tr><td>0.050</td><td>0.048777</td><td>0.49549</td><td>0.000303</td></tr>
+            <tr><td>0.100</td><td>0.097543</td><td>0.99086</td><td>0.000619</td></tr>
+            <tr><td>0.150</td><td>0.146321</td><td>1.48637</td><td>0.000934</td></tr>
+            <tr><td>0.200</td><td>0.195103</td><td>1.98191</td><td>0.001250</td></tr>
+            <tr><td>0.250</td><td>0.243891</td><td>2.47751</td><td>0.001565</td></tr>
+            <tr><td>0.300</td><td>0.292658</td><td>2.97290</td><td>0.001881</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section dark-section" id="schematic">
+      <div class="shell">
+        <div class="section-kicker">04 · 从模型到真实电路</div>
+        <div class="two-col align-end">
+          <div>
+            <h2>原理图必须经得住网表检查</h2>
+            <p>最终 KiCad 图不保留“虚拟放大器”。Q1 使用 BC547B 射极跟随器，U1 是 MSOP-8 的 LTC1967，U2 是 SOT-23-5 的 OPA333；RV1、RV2 都按三端多圈电位器真实接线。</p>
+          </div>
+          <p class="pullquote">“看起来接上了”不等于“电气上已经连接”。每个标签都必须落在引脚网格上，并由生成的网表和 ERC 再证明一次。</p>
+        </div>
+        <figure class="wide-figure">
+          <img src="assets/images/kicad-schematic.png" alt="KiCad 10 中清理完成的 CT RMS 转直流原理图" width="1818" height="909">
+          <figcaption>最终原理图：CT 输入缓冲、可调偏置、LTC1967 RMS 核心、OPA333 增益、输出低通与三个接线端子。</figcaption>
+        </figure>
+        <div class="parts-grid">
+          <article><span>Q1</span><h3>BC547B</h3><p>高输入阻抗缓冲，隔离 CT 信号源与后级偏置网络。</p></article>
+          <article><span>U1</span><h3>LTC1967CMS8</h3><p>真正的 RMS-to-DC 核心，10 µF 决定 50 Hz 下的平均与响应时间。</p></article>
+          <article><span>U2</span><h3>OPA333AIDBVR</h3><p>零漂移单电源运放，完成约 10.35 倍非反相增益。</p></article>
+          <article><span>R6 / R7</span><h3>0.1% 增益网络</h3><p>固定精度电阻加多圈微调，兼顾可计算性和实物标定。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="pcb">
+      <div class="section-kicker">05 · PCB 平面与布线</div>
+      <div class="two-col">
+        <div>
+          <h2>模拟布局首先服务于信号路径</h2>
+          <p>70 × 45 mm 双层板把 CT 输入、5 V 电源和 0–3 V 输出分置在三边。缓冲与 RMS 节点保持紧凑，去耦电容靠近器件，反馈路径避免与输出和电源走线长距离并行。</p>
+        </div>
+        <div class="stat-strip">
+          <span><strong>58</strong>焊盘</span>
+          <span><strong>126</strong>线段</span>
+          <span><strong>12</strong>网络</span>
+          <span><strong>0</strong>未布线</span>
+        </div>
+      </div>
+      <figure class="wide-figure light-figure">
+        <img src="assets/images/kicad-pcb-2d.png" alt="KiCad PCB 编辑器中的双层测量板平面布线" width="1882" height="1058">
+        <figcaption>KiCad PCB 编辑器中的最终平面视图。四个 3.2 mm 安装孔、三组端子、两个多圈微调器均按装配方向检查。</figcaption>
+      </figure>
+
+      <div class="lesson-grid">
+        <article><span>01</span><h3>先证明网络，再追求美观</h3><p>在 PCB 前检查关键网的实际引脚集合；视觉正确但网表错误，会把问题完整传递到 PCB。</p></article>
+        <article><span>02</span><h3>自动布线不是最终验收</h3><p>导入后逐网确认有铜线，并重新运行 DRC。这个项目最终为 126 条轨迹、2 个过孔。</p></article>
+        <article><span>03</span><h3>GUI 与外部工具保持单一写入者</h3><p>MCP 或脚本改板后重新打开工程，避免 KiCad 时间戳保护造成覆盖与丢失。</p></article>
+      </div>
+    </section>
+
+    <section class="section band" id="three-d">
+      <div class="shell three-d-grid">
+        <figure class="image-card final-render">
+          <img src="assets/images/kicad-pcb-3d.png" alt="包含端子、电位器、集成电路和分立器件的 KiCad 3D 装配图" width="1918" height="1079">
+        </figure>
+        <div>
+          <div class="section-kicker">06 · 3D 装配复核</div>
+          <h2>3D 不是装饰，而是最后一次机械审查</h2>
+          <p>3D 视图让端子进线方向、电位器调节方向、TO-92 管脚朝向、安装孔周边空间和丝印遮挡一目了然。它不能代替 DRC，却能发现纯电气规则看不到的装配问题。</p>
+          <ul class="check-list">
+            <li>连接器开口与机壳走线方向一致</li>
+            <li>多圈电位器螺丝可从板边或顶部触达</li>
+            <li>安装孔周围没有元件和高器件干涉</li>
+            <li>封装编号、1 脚方向和实物数据手册一致</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="reproduce">
+      <div class="section-kicker">07 · 如何复现</div>
+      <h2>代码、Skill、KiCad 工程和制造文件全部放在同一个仓库</h2>
+      <div class="reproduce-grid">
+        <div class="terminal">
+          <div class="terminal-bar"><i></i><i></i><i></i><span>Windows PowerShell</span></div>
+          <pre><code>git clone https://github.com/sutony1/windows-ai-eda-workflow.git
+cd windows-ai-eda-workflow
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+
+# 检查 KiCad、SPICE、MCP 与 EDA 环境
+powershell -ExecutionPolicy Bypass -File `
+  .\skills\windows-ai-eda-workflow\scripts\Test-AiEdaEnvironment.ps1</code></pre>
+        </div>
+        <div class="download-list">
+          <a href="https://github.com/sutony1/windows-ai-eda-workflow/tree/main/examples/ct-rms-to-dc/simulation"><span>仿真网表与七点结果</span><b>打开 ↗</b></a>
+          <a href="https://github.com/sutony1/windows-ai-eda-workflow/tree/main/examples/ct-rms-to-dc/kicad"><span>KiCad 10 完整工程</span><b>打开 ↗</b></a>
+          <a href="https://github.com/sutony1/windows-ai-eda-workflow/tree/main/examples/ct-rms-to-dc/manufacturing"><span>Gerber、BOM 与坐标</span><b>打开 ↗</b></a>
+          <a href="https://github.com/sutony1/windows-ai-eda-workflow/tree/main/skills/kicad-ct-rms-pcb"><span>Codex 复用 Skill</span><b>打开 ↗</b></a>
+        </div>
+      </div>
+      <div class="final-note">
+        <h3>真正重要的不是“AI 画了一块板”</h3>
+        <p>而是需求、模型、仿真数据、真实器件、网表、ERC、PCB、DRC 和交付文件形成了同一条可追溯证据链。AI 可以加速迭代，但每一个工程结论仍然要由工具输出和可重复测试来证明。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-grid">
+      <div><span class="brand-mark">∿</span><strong> Windows AI EDA Workflow</strong><p>一个从仿真走向实物 PCB 的开放案例。</p></div>
+      <div><a href="https://github.com/sutony1/windows-ai-eda-workflow">GitHub</a><a href="#top">返回顶部 ↑</a></div>
+    </div>
+  </footer>
+</body>
+</html>

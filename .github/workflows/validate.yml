@@ -32,7 +32,13 @@ jobs:
             'skills/kicad-ct-simulation/SKILL.md',
             'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pro',
             'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_sch',
-            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pcb'
+            'examples/ct-rms-to-dc/kicad/ct_amp_rectifier_5v_clean.kicad_pcb',
+            'site/index.html',
+            'site/styles.css',
+            'site/assets/images/transfer-curve.svg',
+            'site/assets/images/kicad-schematic.png',
+            'site/assets/images/kicad-pcb-2d.png',
+            'site/assets/images/kicad-pcb-3d.png'
           )
           $missing = $required | Where-Object { -not (Test-Path -LiteralPath $_) }
           if ($missing) { $missing | ForEach-Object { Write-Error "Missing: $_" }; exit 1 }
